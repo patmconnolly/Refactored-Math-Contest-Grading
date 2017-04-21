@@ -36,6 +36,11 @@ namespace New_MCG
         List<string> LowerValidationList;
         List<string> UpperValidationFile;
 
+        List<string> titlePage;
+        List<string> lowerIndividualAwards;
+        List<string> teamAwards;
+        List<string> upperIndividualAwards;
+
         public MCG()
         {
             InitializeComponent();
@@ -138,7 +143,9 @@ namespace New_MCG
                     //Grade the students
                     //Build the statistics classes
                     gradeIt();
-                    
+
+                    buildTitlePage();
+
                     //Sort the students by grade
                     LowerStudents = sortStudents(LowerStudents);
                     UpperStudents = sortStudents(UpperStudents);
@@ -153,6 +160,8 @@ namespace New_MCG
                     //Students are in order from earlier.
                     LowerSchool = sortStudents(LowerSchool);
                     UpperSchool = sortStudents(UpperSchool);
+
+                    writeToFile(buildTeamAwards(), "teamAwards", AppPath);
                 }
                 MessageBox.Show("The Processing is complete.");
             }
@@ -334,7 +343,7 @@ namespace New_MCG
             {
                 for(int j=0;j<LowerSchool.Count;j++)
                 {
-                    if(LowerStudents[i].returnSchoolCode()==LowerSchool[j].returnSchoolCode())
+                    if(LowerStudents[i].returnSchoolName()==LowerSchool[j].returnSchoolName())
                     {
                         LowerSchool[j].addStudent(LowerStudents[i]);
                         break;
@@ -347,7 +356,7 @@ namespace New_MCG
             {
                 for(int j=0;j<UpperSchool.Count;j++)
                 {
-                    if(UpperStudents[i].returnSchoolCode()==UpperSchool[j].returnSchoolCode())
+                    if(UpperStudents[i].returnSchoolName() == UpperSchool[j].returnSchoolName())
                     {
                         UpperSchool[j].addStudent(UpperStudents[i]);
                         break;
@@ -362,16 +371,17 @@ namespace New_MCG
             int numSchools = LowerSchool.Count;
             while(iter<numSchools)
             {
-                if(!LowerSchool[iter].returnUsed() && !UpperSchool[iter].returnUsed())
+                //MessageBox.Show(LowerSchool[iter].returnUsed().ToString() + UpperSchool[iter].returnUsed().ToString());
+                if(LowerSchool[iter].returnUsed() || UpperSchool[iter].returnUsed())
+                {
+                    iter++;
+                }
+                else
                 {
                     LowerSchool.RemoveAt(iter);
                     UpperSchool.RemoveAt(iter);
                     Schools.RemoveAt(iter);
                     numSchools--;
-                }
-                else
-                {
-                    iter++;
                 }
             }
         }
@@ -407,7 +417,7 @@ namespace New_MCG
             Student temp;
             for(int i=0;i<them.Count;i++)
             {
-                for(int j=0;j<i-1;j++)
+                for(int j=0;j<them.Count-i-1;j++)
                 {
                     if(them[j].returnScore()<them[j+1].returnScore())
                     {
@@ -450,7 +460,62 @@ namespace New_MCG
             return first;
         }
 
+        private string getAnnualPostFix()
+        {
+            int it = int.Parse(theYear) - 1972;
+            if (it % 10 == 1) { return it.ToString() + "st"; }
+            else if (it % 10 == 2) { return it.ToString() + "nd"; }
+            else if (it % 10 == 3) { return it.ToString() + "rd"; }
+            else { return it.ToString() + "th"; }
+        }
+
         #endregion Parse Functions
+
+        #region String Builder
+        private void buildTitlePage()
+        {
+            titlePage = new List<string>();
+            for(int i = 0; i < 25; i++) { titlePage.Add(""); }
+            titlePage.Add("           " + getAnnualPostFix() + " Annual Northern Minnesota Mathematics Contest");
+            titlePage.Add("                           " + theDate);
+            titlePage.Add(" ");
+            titlePage.Add("             Department of Mathematics and Computer Science");
+            titlePage.Add("                         Bemidji State University");
+        }
+
+        private List<string> buildIndividualAwards(List<Student> them)
+        {
+            List<string> it = new List<string>();
+
+            string ucDivision;
+            string lcDivision;
+
+            int studentCount = 10;
+            int honorStudentScore;
+            honorStudentScore = them[studentCount - 1].returnIntScore();
+            while (them[studentCount].returnIntScore() == honorStudentScore) { studentCount++; }
+
+            if (them[studentCount].returnDivision() == 5) { ucDivision = "UPPER"; lcDivision = "Upper"; }
+            else { ucDivision = "LOWER"; lcDivision = "Lower"; }
+
+            it.Add(ucDivision + " DIVISION INDIVIDUAL AWARDS");
+            it.Add("--------------------------------");
+            it.Add("");
+            it.Add(lcDivision + " Division Honorable Mention:");
+            it.Add("");
+            if(studentCount>=10)
+            {
+                while (studentCount > 10) { it.Add("       " + them[--studentCount].returnNameSchool(studentCount + 1)); it.Add(""); }
+            }
+
+            it.Add(lcDivision + " Division Top Ten:");
+            it.Add("");
+            while (studentCount > 00) { it.Add("       " + them[--studentCount].returnNameSchool(studentCount + 1)); it.Add(""); }
+
+
+            return it;
+        }
+        #endregion String Builder
 
         #region Output Functions
         private List<string> ValidationString(Statistics statistics, List<Student> students)
@@ -485,6 +550,53 @@ namespace New_MCG
             return theOutput;
         }
 
+        private List<string> buildTeamAwards()
+        {
+            List<string> it = new List<string>();
+            List<string> AA = new List<string>();
+            List<string> A = new List<string>();
+            int AAPlace = 1;
+            int APlace = 1;
+
+            it.Add("LOWER DIVISION TEAM AWARDS");
+            it.Add("--------------------------");
+            it.Add(" ");
+
+            for(int i = 0; i<LowerSchool.Count;i++)
+            {
+                if(LowerSchool[i].returnLevel()=="AA" && AA.Count < 2) { AA.Add(LowerSchool[i].teamString(AAPlace++)); }
+                if (LowerSchool[i].returnLevel() == "A" && A.Count < 4) { A.Add(LowerSchool[i].teamString(APlace++)); }
+                if(AAPlace>=2 && APlace >= 4) { break; }
+            }
+
+            for(int i = AA.Count - 1; i >= 0; i--) { it.Add(AA[i]); it.Add(""); }
+            it.Add("");
+            for (int i = A.Count - 1; i >= 0; i--) { it.Add(A[i]); it.Add(""); }
+            it.Add("");
+            //----------------------------------------------------------------------------
+            AA = new List<string>();
+            A = new List<string>();
+            AAPlace = 1;
+            APlace = 1;
+
+            it.Add("UPPER DIVISION TEAM AWARDS");
+            it.Add("--------------------------");
+            it.Add(" ");
+
+            for (int i = 0; i < UpperSchool.Count; i++)
+            {
+                if (UpperSchool[i].returnLevel() == "AA" && AA.Count < 2) { AA.Add(UpperSchool[i].teamString(AAPlace++)); }
+                if (UpperSchool[i].returnLevel() == "A" && A.Count < 4) { A.Add(UpperSchool[i].teamString(APlace++)); }
+                if (AAPlace >= 2 && APlace >= 4) { break; }
+            }
+
+            for (int i = AA.Count - 1; i >= 0; i--) { it.Add(AA[i]); it.Add(""); }
+            it.Add("");
+            for (int i = A.Count - 1; i >= 0; i--) { it.Add(A[i]); it.Add(""); }
+            it.Add("");
+
+            return it;
+        }
 
         private void writeToFile(List<string> lines, string fileName, string path)
         {

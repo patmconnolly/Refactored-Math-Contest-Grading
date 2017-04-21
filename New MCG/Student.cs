@@ -41,6 +41,7 @@ namespace New_MCG
         public int returnLevel() { return level; }
         public string returnName() { return name; }
         public double returnScore() { return score; }
+        public int returnIntScore() { return (int)score; }
 
         //Formats the output for individual awards
         public string returnScoreName(bool top)

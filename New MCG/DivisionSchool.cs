@@ -122,6 +122,52 @@ namespace New_MCG
             levelNumber += it.returnLevel();
         }
         #endregion Setters
-        
+
+        #region String Builders
+        public List<string> buildRanking()
+        {
+            List<string> it = new List<string>();
+            string tempString;
+
+            it.Add(schoolName + "\t" + division + "\t" + level + "\n");
+
+            for(int i=0;i<3;i++)
+            {
+                if (i >= theClass.Count) { break; }
+                tempString = theClass[i].returnIntScore().ToString();
+                while (tempString.Length < 5) { tempString += " "; }
+                tempString += "* ";
+                tempString += theClass[i].returnName();
+                it.Add(tempString);
+            }
+
+            for (int i = 3; i < theClass.Count; i++)
+            {
+                tempString = theClass[i].returnIntScore().ToString();
+                while (tempString.Length < 5) { tempString += " "; }
+                tempString += "  ";
+                tempString += theClass[i].returnName();
+                it.Add(tempString);
+            }
+
+            it.Add("\nTeam Score: " + scoreInt.ToString());
+
+            it.Add("\n* Team members awarded a T-shirt.\n");
+
+            it.Add(studentCount.ToString() + " students participated.");
+
+            return it;
+        }
+
+        public string teamString(int place)
+        {
+            string it = "Class ";
+            if (level == "AA") { it += "AA"; }
+            else { it += " A"; }
+            it += " - ";
+            it += place.ToString() + ": " + schoolName;
+            return it;
+        }
+        #endregion String Builders
     }
 }
