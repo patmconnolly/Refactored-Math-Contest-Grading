@@ -160,7 +160,8 @@ namespace New_MCG
                     //Students are in order from earlier.
                     LowerSchool = sortStudents(LowerSchool);
                     UpperSchool = sortStudents(UpperSchool);
-
+                    
+                    //MessageBox.Show(LowerSchool[0].teamString(1));
                     writeToFile(buildTeamAwards(), "teamAwards", AppPath);
                 }
                 MessageBox.Show("The Processing is complete.");
@@ -553,47 +554,19 @@ namespace New_MCG
         private List<string> buildTeamAwards()
         {
             List<string> it = new List<string>();
-            List<string> AA = new List<string>();
-            List<string> A = new List<string>();
-            int AAPlace = 1;
-            int APlace = 1;
+            int counter = 0;
 
             it.Add("LOWER DIVISION TEAM AWARDS");
             it.Add("--------------------------");
             it.Add(" ");
 
-            for(int i = 0; i<LowerSchool.Count;i++)
-            {
-                if(LowerSchool[i].returnLevel()=="AA" && AA.Count < 2) { AA.Add(LowerSchool[i].teamString(AAPlace++)); }
-                if (LowerSchool[i].returnLevel() == "A" && A.Count < 4) { A.Add(LowerSchool[i].teamString(APlace++)); }
-                if(AAPlace>=2 && APlace >= 4) { break; }
-            }
-
-            for(int i = AA.Count - 1; i >= 0; i--) { it.Add(AA[i]); it.Add(""); }
-            it.Add("");
-            for (int i = A.Count - 1; i >= 0; i--) { it.Add(A[i]); it.Add(""); }
-            it.Add("");
+            
             //----------------------------------------------------------------------------
-            AA = new List<string>();
-            A = new List<string>();
-            AAPlace = 1;
-            APlace = 1;
 
             it.Add("UPPER DIVISION TEAM AWARDS");
             it.Add("--------------------------");
             it.Add(" ");
-
-            for (int i = 0; i < UpperSchool.Count; i++)
-            {
-                if (UpperSchool[i].returnLevel() == "AA" && AA.Count < 2) { AA.Add(UpperSchool[i].teamString(AAPlace++)); }
-                if (UpperSchool[i].returnLevel() == "A" && A.Count < 4) { A.Add(UpperSchool[i].teamString(APlace++)); }
-                if (AAPlace >= 2 && APlace >= 4) { break; }
-            }
-
-            for (int i = AA.Count - 1; i >= 0; i--) { it.Add(AA[i]); it.Add(""); }
-            it.Add("");
-            for (int i = A.Count - 1; i >= 0; i--) { it.Add(A[i]); it.Add(""); }
-            it.Add("");
+            
 
             return it;
         }
