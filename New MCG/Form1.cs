@@ -41,6 +41,12 @@ namespace New_MCG
         List<string> teamAwards;
         List<string> upperIndividualAwards;
 
+        List<string> lowerFrequencyDistribution;
+        List<string> upperFrequencyDistribution;
+
+        List<string> lowerTeamResults;
+        List<string> upperTeamResults;
+
         public MCG()
         {
             InitializeComponent();
@@ -156,13 +162,63 @@ namespace New_MCG
                     //Deletes the schools with nobody in them
                     cleanEmptySchools();
 
+                    //Sets the Division and Level for each school
+                    //Lower Division
+                    for(int i = 0; i < LowerSchool.Count; i++)
+                    {
+                        LowerSchool[i].completeAdding();
+                        int temp = LowerSchool[i].returnLevelNumber();
+                        if (temp % 10 < 5) { LowerSchool[i].setLevel("A"); }
+                        else { LowerSchool[i].setLevel("AA"); }
+                        LowerSchool[i].setDivision("Lower");
+                    }
+                    //Upper Division
+                    for (int i = 0; i < LowerSchool.Count; i++)
+                    {
+                        UpperSchool[i].completeAdding();
+                        int temp = UpperSchool[i].returnLevelNumber();
+                        if (temp % 10 < 5) { UpperSchool[i].setLevel("A"); }
+                        else { UpperSchool[i].setLevel("AA"); }
+                        UpperSchool[i].setDivision("Upper");
+                    }
+
+                    //Add school specific pages
+                    for(int i=0; i<Schools.Count; i++)
+                    {
+                        Schools[i].addSchoolSpecificPages(LowerSchool[i].buildRanking(), UpperSchool[i].buildRanking());
+                    }
+
                     //Sorts the schools by score.
                     //Students are in order from earlier.
                     LowerSchool = sortStudents(LowerSchool);
                     UpperSchool = sortStudents(UpperSchool);
-                    
-                    //MessageBox.Show(LowerSchool[0].teamString(1));
-                    writeToFile(buildTeamAwards(), "teamAwards", AppPath);
+
+                    //Gets the frequency distributions, these are constant for all schools
+                    lowerFrequencyDistribution = Lower.returnFrequencyDistribution();
+                    upperFrequencyDistribution = Upper.returnFrequencyDistribution();
+
+                    //Build the Individual Awards, this is constant for all schools
+                    lowerIndividualAwards = buildIndividualAwards(LowerStudents);
+                    upperIndividualAwards = buildIndividualAwards(UpperStudents);
+
+                    //Build Team Results, this is constant for all schools
+                    lowerTeamResults = buildTeamResults(LowerSchool, "Lower");
+                    upperTeamResults = buildTeamResults(UpperSchool, "Upper");
+
+                    //Build Team Awards, this is constant for all schools
+                    teamAwards = buildTeamAwards();
+
+                    //Add constant pages
+                    for(int i=0; i<Schools.Count; i++)
+                    {
+                        Schools[i].addConstantPages(titlePage, lowerIndividualAwards, upperIndividualAwards, lowerTeamResults, upperTeamResults, teamAwards, lowerFrequencyDistribution, upperFrequencyDistribution);
+                    }
+
+                    //Output School Files
+                    for(int i=0; i<Schools.Count; i++)
+                    {
+                        writeToFile(Schools[i].returnSchoolFile(), Schools[i].returnName(), AppPath);
+                    }
                 }
                 MessageBox.Show("The Processing is complete.");
             }
@@ -439,7 +495,7 @@ namespace New_MCG
             DivisionSchool temp;
             for (int i = 0; i < them.Count; i++)
             {
-                for (int j = 0; j < i - 1; j++)
+                for (int j = 0; j<them.Count-i-1 ; j++)
                 {
                     if (them[j].returnScore() < them[j + 1].returnScore())
                     {
@@ -554,20 +610,93 @@ namespace New_MCG
         private List<string> buildTeamAwards()
         {
             List<string> it = new List<string>();
+            List<string> temp = new List<string>();
             int counter = 0;
 
             it.Add("LOWER DIVISION TEAM AWARDS");
             it.Add("--------------------------");
             it.Add(" ");
+            for(int i=0;i<LowerSchool.Count;i++)
+            {
+                if(LowerSchool[i].returnLevel()=="A")
+                {
+                    counter++;
+                    temp.Add(LowerSchool[i].teamString(counter));
+                }
+                if (counter >= 4) { break; }
+            }
+            counter = 0;
+            temp.Add("");
+            for (int i = 0; i < LowerSchool.Count; i++)
+            {
+                if (LowerSchool[i].returnLevel() == "AA")
+                {
+                    counter++;
+                    temp.Add(LowerSchool[i].teamString(counter));
+                }
+                if (counter >= 2) { break; }
+            }
 
-            
+            for(int i=temp.Count-1;i>=0;i--)
+            {
+                it.Add(temp[i]);
+                it.Add("");
+            }
+
+            it.Add("");
             //----------------------------------------------------------------------------
 
             it.Add("UPPER DIVISION TEAM AWARDS");
             it.Add("--------------------------");
             it.Add(" ");
-            
 
+            counter = 0;
+            temp = new List<string>();
+
+            for (int i = 0; i < UpperSchool.Count; i++)
+            {
+                if (UpperSchool[i].returnLevel() == "A")
+                {
+                    counter++;
+                    temp.Add(UpperSchool[i].teamString(counter));
+                }
+                if (counter >= 4) { break; }
+            }
+            counter = 0;
+            temp.Add("");
+            for (int i = 0; i < UpperSchool.Count; i++)
+            {
+                if (UpperSchool[i].returnLevel() == "AA")
+                {
+                    counter++;
+                    temp.Add(UpperSchool[i].teamString(counter));
+                }
+                if (counter >= 2) { break; }
+            }
+
+            for (int i = temp.Count - 1; i >= 0; i--)
+            {
+                it.Add(temp[i]);
+                it.Add("");
+            }
+
+            return it;
+        }
+
+        private List<string> buildTeamResults(List<DivisionSchool> them, string division)
+        {
+            List<string> it = new List<string>();
+
+            it.Add(division + " Division Team Results");
+            it.Add("");
+            it.Add("      Team");
+            it.Add("Rank  Score  Ties");
+            it.Add("----  -----  ----");
+            for(int i=0;i<them.Count;i++)
+            {
+                it.Add(them[i].returnTeamResults(i + 1));
+            }
+            
             return it;
         }
 

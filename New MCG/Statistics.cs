@@ -148,7 +148,7 @@ namespace New_MCG
                 tempString += i.ToString() + ": ";
 
                 int count;
-                if (i < 40) { count = fortyCount; }
+                if (i >= 40) { count = fortyCount; }
                 else { count = sTable[i, 8]; }
 
                 if (count > 99) { tempString += " " + count.ToString(); }

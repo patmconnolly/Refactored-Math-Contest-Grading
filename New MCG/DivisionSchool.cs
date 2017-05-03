@@ -54,19 +54,10 @@ namespace New_MCG
         public int returnScoreInt() { return scoreInt; }
         public int returnTie() { return scoreTie; }
         public double returnScore() { return Score; }
+        public int returnLevelNumber() { return levelNumber; }
 
         public Student returnStudent(int i) { return theClass[i]; }
-
-        public string returnTeamAwardString(int place)
-        {
-            string it = "Class ";
-            if (levelNumber / studentCount > 5) { it += "AA - "; }
-            else { it += " A - "; }
-            it += place.ToString() + ": ";
-            it += schoolName;
-            return it;
-        }
-
+        
         public string returnTeamResults(int place)
         {
             string it = "";
@@ -89,7 +80,7 @@ namespace New_MCG
             else { it += scoreTie.ToString(); }
 
             //Adds level
-            if (levelNumber / studentCount > 5) { it += "  AA "; }
+            if (level=="AA") { it += "  AA "; }
             else { it += "   A "; }
 
             //Adds school name
@@ -121,6 +112,7 @@ namespace New_MCG
             scoreTie = (int)((Score - scoreInt) * 10000);
             levelNumber += it.returnLevel();
         }
+        public void completeAdding() { if (studentCount > 0) { levelNumber = levelNumber / studentCount; } }
         #endregion Setters
 
         #region String Builders
@@ -168,6 +160,7 @@ namespace New_MCG
             it += place.ToString() + ": " + schoolName;
             return it;
         }
+        
         #endregion String Builders
     }
 }
