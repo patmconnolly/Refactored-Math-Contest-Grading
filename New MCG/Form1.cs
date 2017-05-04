@@ -212,6 +212,7 @@ namespace New_MCG
                     for(int i=0; i<Schools.Count; i++)
                     {
                         Schools[i].addConstantPages(titlePage, lowerIndividualAwards, upperIndividualAwards, lowerTeamResults, upperTeamResults, teamAwards, lowerFrequencyDistribution, upperFrequencyDistribution);
+                        Schools[i].buildSchoolFile();
                     }
 
                     //Output School Files
@@ -219,6 +220,9 @@ namespace New_MCG
                     {
                         writeToFile(Schools[i].returnSchoolFile(), Schools[i].returnName(), AppPath);
                     }
+
+                    //Output Instructor Information
+                    writeToFile(buildInstructorInformation(), "INSTRUCTOR_INFORMATION", AppPath);
                 }
                 MessageBox.Show("The Processing is complete.");
             }
@@ -702,10 +706,51 @@ namespace New_MCG
 
         private void writeToFile(List<string> lines, string fileName, string path)
         {
+            //MessageBox.Show(lines.Count.ToString());
             TextWriter tw = new StreamWriter(path + fileName + ".txt");
-            foreach (string s in lines)
-                tw.WriteLine(s);
+            for(int i=0; i<lines.Count; i++)
+            {
+                tw.WriteLine(lines[i]);
+            }
+            //foreach (string s in lines)
+            //    tw.WriteLine(s);
             tw.Close();
+        }
+
+        private List<string> buildInstructorInformation()
+        {
+            List<string> it = new List<string>();
+            it.Add("INSTRUCTOR INFORMATION");
+            for(int i=0; i<titlePage.Count; i++) { it.Add(titlePage[i]); }  //Adds title page to instructor info    ---     LOWER DIVISION
+            it.Add("\f");
+            List<string> temp = Lower.returnItemAnalysis();
+            for(int i=0; i<temp.Count; i++) { it.Add(temp[i]); }            //Adds item analysis
+            it.Add("\f");
+            for(int i=0; i<lowerFrequencyDistribution.Count; i++) { it.Add(lowerFrequencyDistribution[i]); }        //Adds frequency distribution
+            it.Add("\f");
+            for(int i=0; i<lowerTeamResults.Count; i++) { it.Add(lowerTeamResults[i]); }                            //Adds Team Results
+            it.Add("\f");
+
+            temp = Upper.returnItemAnalysis();                              //UPPER DIVISION
+            for (int i = 0; i < temp.Count; i++) { it.Add(temp[i]); }            //Adds item analysis
+            it.Add("\f");
+            for (int i = 0; i < upperFrequencyDistribution.Count; i++) { it.Add(upperFrequencyDistribution[i]); }        //Adds frequency distribution
+            it.Add("\f");
+            for (int i = 0; i < upperTeamResults.Count; i++) { it.Add(upperTeamResults[i]); }                            //Adds Team Results
+            it.Add("\f");
+
+            it.Add("Lower Division Coded Scores With Tiebreakers");
+            it.Add("Key:  " + Lower.returnKey());
+            it.Add("Ties: " + Lower.returnTie());
+            for(int i=0; i<LowerStudents.Count; i++) { it.Add(LowerStudents[i].returnInstructorString()); }
+            it.Add("\f");
+
+            it.Add("Upper Division Coded Scores With Tiebreakers");
+            it.Add("Key:  " + Upper.returnKey());
+            it.Add("Ties: " + Upper.returnTie());
+            for (int i = 0; i < UpperStudents.Count; i++) { it.Add(UpperStudents[i].returnInstructorString()); }
+
+            return it;
         }
         #endregion Output Functions
     }

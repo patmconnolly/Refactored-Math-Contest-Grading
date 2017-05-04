@@ -135,7 +135,8 @@ namespace New_MCG
                 }
                 catch (FormatException)
                 {
-                    //Intentially left empty
+                    schoolCode = false;
+                    theNumber = -1;
                 }
                 schoolName = huntSchoolName((theNumber), theSchools);
                 lineCount--;
@@ -187,6 +188,32 @@ namespace New_MCG
                 if (it == theSchools[i].returnCode()) { return theSchools[i].returnName(); }
             }
             return "INVALID SCHOOL VALUE";
+        }
+
+        //Returns string for instructor information
+        public string returnInstructorString()
+        {
+            string it = "";
+            string temp = "";
+            
+            it += (score * 10000).ToString();
+            it += " ";
+
+            temp = name;
+            while (temp.Length < 40) { temp += " "; }
+            it += temp;
+
+            if (level > 5) { it += "AA  "; }
+            else { it += " A  "; }
+
+            temp = schoolName;
+            while (temp.Length < 30) { temp += " "; }
+            it += temp;
+
+            it += " ";
+            it += answers;
+
+            return it;
         }
 
         //Returns debug string for validation file
