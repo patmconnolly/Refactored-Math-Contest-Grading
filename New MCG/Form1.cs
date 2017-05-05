@@ -13,6 +13,8 @@ namespace New_MCG
 {
     public partial class MCG : Form
     {
+        //Variable Defanitions
+        #region Variable Defanitions
         bool valid;
 
         string theMonth;
@@ -46,7 +48,9 @@ namespace New_MCG
 
         List<string> lowerTeamResults;
         List<string> upperTeamResults;
+        #endregion Variable Defanitions
 
+        //Constructor, gets date time and populates the dropdown boxes
         public MCG()
         {
             InitializeComponent();
@@ -56,6 +60,8 @@ namespace New_MCG
         }
 
         #region ButtonClicks
+
+        //Lower Button, gets file popup
         private void lowerButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -72,6 +78,7 @@ namespace New_MCG
             }
         }
 
+        //Upper Button, gets file popup
         private void upperButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -88,6 +95,7 @@ namespace New_MCG
             }
         }
 
+        //School File Button, file popup
         private void schoolButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -105,6 +113,8 @@ namespace New_MCG
         }
         #endregion ButtonClicks
 
+        //Here is where the magic happens
+        //Procedurally goes through everything and processes the information
         private void validateGrade_Click(object sender, EventArgs e)
         {
             //Pull the dates
@@ -150,6 +160,7 @@ namespace New_MCG
                     //Build the statistics classes
                     gradeIt();
 
+                    //Builds the title page
                     buildTitlePage();
 
                     //Sort the students by grade
@@ -223,13 +234,15 @@ namespace New_MCG
 
                     //Output Instructor Information
                     writeToFile(buildInstructorInformation(), "INSTRUCTOR_INFORMATION", AppPath);
+                    MessageBox.Show("The processing is complete.\nEverything seems to have worked.\nMake sure to double check.");
                 }
-                MessageBox.Show("The Processing is complete.");
+                else { MessageBox.Show("The processing is complete.\nPlease see validation files to correct errors."); }
             }
             else { MessageBox.Show("INVALID PATH!\nPLEASE TRY AGAIN..."); }
         }
 
         #region Parse Functions
+        //Validates the Tie
         private bool validTie(string tie)
         {
             if (tie.Count() == 40)
@@ -246,6 +259,7 @@ namespace New_MCG
             else { return false; }
         }
 
+        //Validates the Key
         private bool validKey(string key)
         {
             if (key.Count() == 40)
@@ -262,6 +276,7 @@ namespace New_MCG
             else { return false; }
         }
 
+        //Populates the students, schools, and statistics.
         private void populate()
         {
             //Adds School to Division Upper and Lower Classes
@@ -328,6 +343,7 @@ namespace New_MCG
             }
         }
 
+        //Goes through everything to make sure it is correct
         private bool validate()
         {
             //Checks all lower division students to see if they are valid
@@ -346,6 +362,7 @@ namespace New_MCG
             return true;
         }
 
+        //Grades everything by passing to statistics and getting the score back
         private void gradeIt()
         {
             #region Ensure Correct Placement
@@ -397,6 +414,7 @@ namespace New_MCG
             }
         }
 
+        //Assigns the students to the correct school
         private void assignStudentsToSchool()
         {
             //Places the lower division students in the correct school
@@ -426,6 +444,7 @@ namespace New_MCG
             }
         }
 
+        //Eliminates the schools that are empty
         private void cleanEmptySchools()
         {
             int iter = 0;
@@ -447,6 +466,7 @@ namespace New_MCG
             }
         }
 
+        //Takes a string, returns a list of strings. Splits on white space
         private List<string> splitOnWhiteSpace(string line)
         {
             List<string> theLine = new List<string>();
@@ -470,6 +490,7 @@ namespace New_MCG
             return theLine;
         }
 
+        //Bubble sorts the students
         private List<Student> sortStudents(List<Student> them)
         {
             //Pass in list of students
@@ -491,6 +512,7 @@ namespace New_MCG
             return them;
         }
 
+        //Bubble sotrs the schools
         private List<DivisionSchool> sortStudents(List<DivisionSchool> them)
         {
             //Pass in list of students
@@ -512,6 +534,7 @@ namespace New_MCG
             return them;
         }
 
+        //Adds two lists of strings together, returns the concatonation
         private List<string> combineStringLists(List<string> first, List<string> second)
         {
             for(int i=0;i<second.Count;i++)
@@ -521,6 +544,8 @@ namespace New_MCG
             return first;
         }
 
+        //Gets the annual postfix
+        //e. g. 40th, 41st, 42nd, 43rd, 44th
         private string getAnnualPostFix()
         {
             int it = int.Parse(theYear) - 1972;
@@ -533,6 +558,8 @@ namespace New_MCG
         #endregion Parse Functions
 
         #region String Builder
+
+        //Builds the title page
         private void buildTitlePage()
         {
             titlePage = new List<string>();
@@ -544,6 +571,7 @@ namespace New_MCG
             titlePage.Add("                         Bemidji State University");
         }
 
+        //Builds the individual awards page
         private List<string> buildIndividualAwards(List<Student> them)
         {
             List<string> it = new List<string>();
@@ -576,9 +604,45 @@ namespace New_MCG
 
             return it;
         }
-        #endregion String Builder
 
-        #region Output Functions
+        //Builds the instructor information file
+        private List<string> buildInstructorInformation()
+        {
+            List<string> it = new List<string>();
+            it.Add("INSTRUCTOR INFORMATION");
+            for (int i = 0; i < titlePage.Count; i++) { it.Add(titlePage[i]); }  //Adds title page to instructor info    ---     LOWER DIVISION
+            it.Add("\f");
+            List<string> temp = Lower.returnItemAnalysis();
+            for (int i = 0; i < temp.Count; i++) { it.Add(temp[i]); }            //Adds item analysis
+            it.Add("\f");
+            for (int i = 0; i < lowerFrequencyDistribution.Count; i++) { it.Add(lowerFrequencyDistribution[i]); }        //Adds frequency distribution
+            it.Add("\f");
+            for (int i = 0; i < lowerTeamResults.Count; i++) { it.Add(lowerTeamResults[i]); }                            //Adds Team Results
+            it.Add("\f");
+
+            temp = Upper.returnItemAnalysis();                              //UPPER DIVISION
+            for (int i = 0; i < temp.Count; i++) { it.Add(temp[i]); }            //Adds item analysis
+            it.Add("\f");
+            for (int i = 0; i < upperFrequencyDistribution.Count; i++) { it.Add(upperFrequencyDistribution[i]); }        //Adds frequency distribution
+            it.Add("\f");
+            for (int i = 0; i < upperTeamResults.Count; i++) { it.Add(upperTeamResults[i]); }                            //Adds Team Results
+            it.Add("\f");
+
+            it.Add("Lower Division Coded Scores With Tiebreakers");
+            it.Add("Key:  " + Lower.returnKey());
+            it.Add("Ties: " + Lower.returnTie());
+            for (int i = 0; i < LowerStudents.Count; i++) { it.Add(LowerStudents[i].returnInstructorString()); }
+            it.Add("\f");
+
+            it.Add("Upper Division Coded Scores With Tiebreakers");
+            it.Add("Key:  " + Upper.returnKey());
+            it.Add("Ties: " + Upper.returnTie());
+            for (int i = 0; i < UpperStudents.Count; i++) { it.Add(UpperStudents[i].returnInstructorString()); }
+
+            return it;
+        }
+
+        //Builds the validation file
         private List<string> ValidationString(Statistics statistics, List<Student> students)
         {
             List<string> theOutput = new List<string>();
@@ -588,18 +652,18 @@ namespace New_MCG
 
             //Adds the key confirmation line to output.
             if (statistics.returnKeyErr()) { theOutput.Add(statistics.returnDivision() + " Key Error     " + statistics.returnKey()); }
-            else { theOutput.Add(statistics.returnDivision() + " Key ~OK~      " + statistics.returnKey());}
+            else { theOutput.Add(statistics.returnDivision() + " Key ~OK~      " + statistics.returnKey()); }
 
             //Adds the tie confirmation line to output.
             if (statistics.returnTieErr()) { theOutput.Add(statistics.returnDivision() + " Tie Error     " + statistics.returnTie()); }
-            else { theOutput.Add(statistics.returnDivision() + " Tie ~OK~      " + statistics.returnTie());}
+            else { theOutput.Add(statistics.returnDivision() + " Tie ~OK~      " + statistics.returnTie()); }
 
             //Adds placeholder line, will add error statistics at the end.
             //This is element 2 in the list
             theOutput.Add("");
 
             //Adds each student's validation line to the output.
-            for(int i=0;i<students.Count;i++)
+            for (int i = 0; i < students.Count; i++)
             {
                 if (!students[i].returnValid()) { numErr++; }
                 theOutput.Add(students[i].debugString());
@@ -611,6 +675,7 @@ namespace New_MCG
             return theOutput;
         }
 
+        //Builds the team awards page
         private List<string> buildTeamAwards()
         {
             List<string> it = new List<string>();
@@ -620,9 +685,9 @@ namespace New_MCG
             it.Add("LOWER DIVISION TEAM AWARDS");
             it.Add("--------------------------");
             it.Add(" ");
-            for(int i=0;i<LowerSchool.Count;i++)
+            for (int i = 0; i < LowerSchool.Count; i++)
             {
-                if(LowerSchool[i].returnLevel()=="A")
+                if (LowerSchool[i].returnLevel() == "A")
                 {
                     counter++;
                     temp.Add(LowerSchool[i].teamString(counter));
@@ -641,7 +706,7 @@ namespace New_MCG
                 if (counter >= 2) { break; }
             }
 
-            for(int i=temp.Count-1;i>=0;i--)
+            for (int i = temp.Count - 1; i >= 0; i--)
             {
                 it.Add(temp[i]);
                 it.Add("");
@@ -687,6 +752,7 @@ namespace New_MCG
             return it;
         }
 
+        //Builds the team results page
         private List<string> buildTeamResults(List<DivisionSchool> them, string division)
         {
             List<string> it = new List<string>();
@@ -696,14 +762,19 @@ namespace New_MCG
             it.Add("      Team");
             it.Add("Rank  Score  Ties");
             it.Add("----  -----  ----");
-            for(int i=0;i<them.Count;i++)
+            for (int i = 0; i < them.Count; i++)
             {
                 it.Add(them[i].returnTeamResults(i + 1));
             }
-            
+
             return it;
         }
 
+        #endregion String Builder
+
+        #region Output Functions
+
+        //Writes a list of strings to a file
         private void writeToFile(List<string> lines, string fileName, string path)
         {
             //MessageBox.Show(lines.Count.ToString());
@@ -715,42 +786,6 @@ namespace New_MCG
             //foreach (string s in lines)
             //    tw.WriteLine(s);
             tw.Close();
-        }
-
-        private List<string> buildInstructorInformation()
-        {
-            List<string> it = new List<string>();
-            it.Add("INSTRUCTOR INFORMATION");
-            for(int i=0; i<titlePage.Count; i++) { it.Add(titlePage[i]); }  //Adds title page to instructor info    ---     LOWER DIVISION
-            it.Add("\f");
-            List<string> temp = Lower.returnItemAnalysis();
-            for(int i=0; i<temp.Count; i++) { it.Add(temp[i]); }            //Adds item analysis
-            it.Add("\f");
-            for(int i=0; i<lowerFrequencyDistribution.Count; i++) { it.Add(lowerFrequencyDistribution[i]); }        //Adds frequency distribution
-            it.Add("\f");
-            for(int i=0; i<lowerTeamResults.Count; i++) { it.Add(lowerTeamResults[i]); }                            //Adds Team Results
-            it.Add("\f");
-
-            temp = Upper.returnItemAnalysis();                              //UPPER DIVISION
-            for (int i = 0; i < temp.Count; i++) { it.Add(temp[i]); }            //Adds item analysis
-            it.Add("\f");
-            for (int i = 0; i < upperFrequencyDistribution.Count; i++) { it.Add(upperFrequencyDistribution[i]); }        //Adds frequency distribution
-            it.Add("\f");
-            for (int i = 0; i < upperTeamResults.Count; i++) { it.Add(upperTeamResults[i]); }                            //Adds Team Results
-            it.Add("\f");
-
-            it.Add("Lower Division Coded Scores With Tiebreakers");
-            it.Add("Key:  " + Lower.returnKey());
-            it.Add("Ties: " + Lower.returnTie());
-            for(int i=0; i<LowerStudents.Count; i++) { it.Add(LowerStudents[i].returnInstructorString()); }
-            it.Add("\f");
-
-            it.Add("Upper Division Coded Scores With Tiebreakers");
-            it.Add("Key:  " + Upper.returnKey());
-            it.Add("Ties: " + Upper.returnTie());
-            for (int i = 0; i < UpperStudents.Count; i++) { it.Add(UpperStudents[i].returnInstructorString()); }
-
-            return it;
         }
         #endregion Output Functions
     }

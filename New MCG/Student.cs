@@ -128,16 +128,8 @@ namespace New_MCG
             int theNumber = -1;
             if (lineCount >= 0)
             {
-                try
-                {
-                    theNumber = Convert.ToInt32(theLine[lineCount]);
-                    schoolCode = true;
-                }
-                catch (FormatException)
-                {
-                    schoolCode = false;
-                    theNumber = -1;
-                }
+                theNumber = sneakNumberConvert(theLine[lineCount]);
+                if (theNumber > 0) { schoolCode = true; }
                 schoolName = huntSchoolName((theNumber), theSchools);
                 lineCount--;
             }
@@ -181,6 +173,7 @@ namespace New_MCG
             else { return true; }
         }
 
+        //Gets the Schools name
         private string huntSchoolName(int it, List<MainSchool> theSchools)
         {
             for(int i=0;i<theSchools.Count;i++)
@@ -260,6 +253,39 @@ namespace New_MCG
             it += answers;
 
             return it;
+        }
+
+        //Sneakily convert to int from string, return -1 if bad
+        private int sneakNumberConvert(string it)
+        {
+            int theVal = 0;
+            char temp;
+            int temp2;
+            for(int i=0; i<it.Length; i++)
+            {
+                temp = it[i];
+                temp2 = numHelper(temp);
+                if (temp2 == -1) { return -1; }
+                else { theVal = theVal * 10; theVal += temp2; }
+            }
+
+            return theVal;
+        }
+
+        //Helps with sneakNumberConvert
+        private int numHelper(char it)
+        {
+            if (it == '0') { return 0; }
+            else if (it == '1') { return 1; }
+            else if (it == '2') { return 2; }
+            else if (it == '3') { return 3; }
+            else if (it == '4') { return 4; }
+            else if (it == '5') { return 5; }
+            else if (it == '6') { return 6; }
+            else if (it == '7') { return 7; }
+            else if (it == '8') { return 8; }
+            else if (it == '9') { return 9; }
+            else { return -1; }
         }
     }
 }

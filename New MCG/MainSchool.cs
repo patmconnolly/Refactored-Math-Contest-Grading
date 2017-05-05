@@ -8,6 +8,7 @@ namespace New_MCG
 {
     class MainSchool
     {
+        #region Var Defanitions
         string theName;
         int theCode;
 
@@ -24,6 +25,7 @@ namespace New_MCG
         List<string> lowerTeamResults;//
         List<string> upperFreqDist;//
         List<string> upperTeamResults;//
+        #endregion Var Defanitions
 
         //Getters
         public string returnName() { return theName; }
@@ -37,6 +39,7 @@ namespace New_MCG
             theName = Name;
         }
 
+        //Adds all the parts together for output to file format
         public void buildSchoolFile()
         {
             schoolFile = new List<string>();
@@ -56,6 +59,7 @@ namespace New_MCG
             schoolFile = concatPages(schoolFile, upperTeamResults);
         }
 
+        //Takes the constant pages, calculated in Form1.cs and prepares for consolidation
         public void addConstantPages(List<string> TitlePage, List<string> LIndAwards, List<string> UIndAwards, List<string> LTeamResults, List<string> UTeamResults, List<string> TeamAwards, List<string> LFDist, List<string> UFDist)
         {
             titlePage = TitlePage;
@@ -68,11 +72,14 @@ namespace New_MCG
             upperFreqDist = UFDist;
         }
 
+        //Takes the school specific pages from DivisionSchool.cs and prepares for consolidation
         public void addSchoolSpecificPages(List<string> LRanking, List<string> URanking)
         {
             lowerRanking = LRanking;
             upperRanking = URanking;
         }
+
+        //Takes two pages and concatonates them together, separated by new page character
         private List<string> concatPages(List<string> page1, List<string> page2)
         {
             page1.Add("\f");
@@ -82,6 +89,5 @@ namespace New_MCG
             }
             return page1;
         }
-        
     }
 }

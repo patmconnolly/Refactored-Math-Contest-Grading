@@ -56,8 +56,10 @@ namespace New_MCG
         public double returnScore() { return Score; }
         public int returnLevelNumber() { return levelNumber; }
 
+        //Returns a specific student
         public Student returnStudent(int i) { return theClass[i]; }
         
+        //Returns appropriate line for team results page
         public string returnTeamResults(int place)
         {
             string it = "";
@@ -91,14 +93,16 @@ namespace New_MCG
 
         //Setters
         #region Setters
-        public void setSchoolCode(int SchoolCode) { schoolCode = SchoolCode; }
-        public void setSchoolName(string SchoolName) { schoolName = SchoolName; }
-        public void flipUsed() { used = !used; }
         public void setDivision(string Division) { division = Division; }
         public void setLevel(string Level) { level = Level; }
 
+        //Sneaks in a tie for the school if there is a perfect tie between schools
+        //Based on which team had a member scanned first
+        //Technically purely random
+        /*Don't have a referance, must have forgotten to use, should work anyway just leaves score alone*/
         public void sneakTie() { scoreTie += 1; Score += 0.0001; }
 
+        //Adds a student to the class
         public void addStudent(Student it)
         {
             theClass.Add(it);
@@ -112,6 +116,8 @@ namespace New_MCG
             scoreTie = (int)((Score - scoreInt) * 10000);
             levelNumber += it.returnLevel();
         }
+
+        //Takes the average of the level number to determine the actual level for this school
         public void completeAdding() { if (studentCount > 0) { levelNumber = levelNumber / studentCount; } }
         #endregion Setters
 

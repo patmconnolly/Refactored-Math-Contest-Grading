@@ -9,6 +9,7 @@ namespace New_MCG
 {
     class Statistics
     {
+        #region Var Defanitions
         string division;
         int[,] sTable;
         bool KeyErr;
@@ -22,6 +23,7 @@ namespace New_MCG
         int studentCount;
         int totalScore;
         double averageScore;
+        #endregion Var Defanitions
 
         //Getters
         public bool returnKeyErr() { return KeyErr; }
@@ -29,7 +31,6 @@ namespace New_MCG
         public string returnDivision() { return division; }
         public string returnKey() { return theKey; }
         public string returnTie() { return theTie; }
-
 
         //Constructor
         //Reads division, key, and tie
@@ -127,6 +128,7 @@ namespace New_MCG
             return score;
         }
 
+        //Returns the Frequency Distribution Histogram
         public List<string> returnFrequencyDistribution()
         {
             List<string> it = new List<string>();
@@ -163,6 +165,7 @@ namespace New_MCG
             return it;
         }
 
+        //Returns the Item Analysis for Instructor Information
         public List<string> returnItemAnalysis()
         {
             List<string> it = new List<string>();
